@@ -20,6 +20,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'failed_attempts',
+        'locked_at',
+        'must_reset_password',
     ];
 
     /**
@@ -42,6 +45,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'locked_at' => 'datetime',
+            'must_reset_password' => 'boolean',
         ];
     }
 }
