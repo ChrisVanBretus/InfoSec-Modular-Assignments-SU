@@ -27,18 +27,24 @@
                         @if (Route::has('login'))
                             <nav class="-mx-3 flex flex-1 justify-end">
                                 @auth
-                                    <a
-                                        href="{{ url('/dashboard') }}"
-                                        class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                    >
-                                        Dashboard
-                                    </a>
+                                    <span class="px-3 py-2 text-black dark:text-white">
+                                        Вы вошли как {{ Auth::user()->email }}
+                                    </span>
+                                    <form method="post" action="/logout">
+                                        @csrf
+                                        <button
+                                            type="submit"
+                                            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                        >
+                                            Выйти
+                                        </button>
+                                    </form>
                                 @else
                                     <a
                                         href="{{ route('login') }}"
                                         class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                     >
-                                        Log in
+                                        Войти
                                     </a>
 
                                     @if (Route::has('register'))
@@ -46,7 +52,7 @@
                                             href="{{ route('register') }}"
                                             class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                         >
-                                            Register
+                                            Регистрация
                                         </a>
                                     @endif
                                 @endauth
