@@ -3,7 +3,6 @@
 use App\Services\Security\PasswordGeneratorService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use InvalidArgumentException;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -15,7 +14,7 @@ Artisan::command('password:generate {length=12}', function () {
 
     try {
         $password = $generator->generate($length);
-    } catch (InvalidArgumentException $exception) {
+    } catch (\InvalidArgumentException $exception) {
         $this->error($exception->getMessage());
 
         return 1;
