@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\Security\PasswordGeneratorService;
+use App\Module1\Task2\Services\PasswordGeneratorService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 

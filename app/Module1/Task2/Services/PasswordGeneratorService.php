@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Security;
+namespace App\Module1\Task2\Services;
 
 use InvalidArgumentException;
 

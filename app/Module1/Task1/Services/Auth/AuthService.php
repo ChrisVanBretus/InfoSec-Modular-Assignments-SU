@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Auth;
+namespace App\Module1\Task1\Services\Auth;
 
 use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Module1\Task1\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
