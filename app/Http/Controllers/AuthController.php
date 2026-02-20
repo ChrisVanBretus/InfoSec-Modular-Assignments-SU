@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Services\Auth\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function __construct(private AuthService $authService) {}
+
     public function showRegister()
     {
         return view('auth.register');
@@ -23,16 +22,10 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-        ]);
+        $user = $this->authService->register($data);
+        $this->authService->loginUser($request, $user);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect('/')->with('status', 'Регистрация успешна.');
+        return redirect('/')->with('status', 'Р РµРіРёСЃС‚СЂР°С†РёСЏ СѓСЃРїРµС€РЅР°.');
     }
 
     public function showLogin()
@@ -47,58 +40,21 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
+        $result = $this->authService->login($request, $credentials);
 
-        if (!$user) {
-            throw ValidationException::withMessages([
-                'email' => 'Неверные учетные данные.',
-            ]);
-        }
-
-        if ($user->locked_at || $user->must_reset_password) {
+        if ($result['status'] === 'reset') {
             return redirect('/password/reset')
-                ->withErrors(['email' => 'Аккаунт заблокирован. Требуется смена пароля.']);
+                ->withErrors(['email' => $result['message']]);
         }
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            $user->forceFill([
-                'failed_attempts' => 0,
-                'locked_at' => null,
-                'must_reset_password' => false,
-            ])->save();
-
-            return redirect('/')->with('status', 'Вы вошли в систему.');
-        }
-
-        $user->failed_attempts = (int) $user->failed_attempts + 1;
-
-        if ($user->failed_attempts >= 3) {
-            $user->forceFill([
-                'failed_attempts' => $user->failed_attempts,
-                'locked_at' => now(),
-                'must_reset_password' => true,
-            ])->save();
-
-            return redirect('/password/reset')
-                ->withErrors(['email' => 'Слишком много попыток. Аккаунт заблокирован, смените пароль.']);
-        }
-
-        $user->save();
-
-        throw ValidationException::withMessages([
-            'password' => 'Неверный пароль. Попыток осталось: ' . (3 - $user->failed_attempts) . '.',
-        ]);
+        return redirect('/')->with('status', $result['message']);
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $this->authService->logout($request);
 
-        return redirect('/login')->with('status', 'Вы вышли из системы.');
+        return redirect('/login')->with('status', 'Р’С‹ РІС‹С€Р»Рё РёР· СЃРёСЃС‚РµРјС‹.');
     }
 
     public function showReset()
@@ -113,21 +69,8 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::where('email', $data['email'])->first();
+        $this->authService->resetPassword($data);
 
-        if (!$user) {
-            throw ValidationException::withMessages([
-                'email' => 'Пользователь не найден.',
-            ]);
-        }
-
-        $user->forceFill([
-            'password' => Hash::make($data['password']),
-            'failed_attempts' => 0,
-            'locked_at' => null,
-            'must_reset_password' => false,
-        ])->save();
-
-        return redirect('/login')->with('status', 'Пароль обновлен. Войдите снова.');
+        return redirect('/login')->with('status', 'РџР°СЂРѕР»СЊ РѕР±РЅРѕРІР»РµРЅ. Р’РѕР№РґРёС‚Рµ СЃРЅРѕРІР°.');
     }
 }

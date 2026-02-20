@@ -1,7 +1,9 @@
 <?php
 
+use App\Services\Security\PasswordGeneratorService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use InvalidArgumentException;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -9,38 +11,15 @@ Artisan::command('inspire', function () {
 
 Artisan::command('password:generate {length=12}', function () {
     $length = (int) $this->argument('length');
+    $generator = app(PasswordGeneratorService::class);
 
-    if ($length < 8) {
-        $this->error('Минимальная длина пароля — 8 символов.');
+    try {
+        $password = $generator->generate($length);
+    } catch (InvalidArgumentException $exception) {
+        $this->error($exception->getMessage());
+
         return 1;
     }
-
-    $upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $lower = 'abcdefghijklmnopqrstuvwxyz';
-    $digits = '0123456789';
-    $special = '!@#$%^&*()-_=+[]{};:,.<>?';
-
-    $all = $upper . $lower . $digits . $special;
-
-    $passwordChars = [
-        $upper[random_int(0, strlen($upper) - 1)],
-        $lower[random_int(0, strlen($lower) - 1)],
-        $digits[random_int(0, strlen($digits) - 1)],
-        $special[random_int(0, strlen($special) - 1)],
-    ];
-
-    for ($i = 4; $i < $length; $i++) {
-        $passwordChars[] = $all[random_int(0, strlen($all) - 1)];
-    }
-
-    for ($i = count($passwordChars) - 1; $i > 0; $i--) {
-        $j = random_int(0, $i);
-        $tmp = $passwordChars[$i];
-        $passwordChars[$i] = $passwordChars[$j];
-        $passwordChars[$j] = $tmp;
-    }
-
-    $password = implode('', $passwordChars);
 
     $this->info($password);
     $this->comment('Правило: минимум 8 символов, хотя бы одна заглавная, одна строчная, одна цифра и один спецсимвол.');
