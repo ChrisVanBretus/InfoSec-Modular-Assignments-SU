@@ -26,14 +26,14 @@ class AuthService
 
         if (! $user) {
             throw ValidationException::withMessages([
-                'email' => 'РќРµРІРµСЂРЅС‹Рµ СѓС‡РµС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ.',
+                'email' => 'Неверные учетные данные.',
             ]);
         }
 
         if ($user->locked_at || $user->must_reset_password) {
             return [
                 'status' => 'reset',
-                'message' => 'РђРєРєР°СѓРЅС‚ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ. РўСЂРµР±СѓРµС‚СЃСЏ СЃРјРµРЅР° РїР°СЂРѕР»СЏ.',
+                'message' => 'Аккаунт заблокирован. Требуется смена пароля.',
             ];
         }
 
@@ -43,7 +43,7 @@ class AuthService
 
             return [
                 'status' => 'ok',
-                'message' => 'Р’С‹ РІРѕС€Р»Рё РІ СЃРёСЃС‚РµРјСѓ.',
+                'message' => 'Вы вошли в систему.',
             ];
         }
 
@@ -52,12 +52,12 @@ class AuthService
         if ($remaining === 0) {
             return [
                 'status' => 'reset',
-                'message' => 'РЎР»РёС€РєРѕРј РјРЅРѕРіРѕ РїРѕРїС‹С‚РѕРє. РђРєРєР°СѓРЅС‚ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ, СЃРјРµРЅРёС‚Рµ РїР°СЂРѕР»СЊ.',
+                'message' => 'Слишком много попыток. Аккаунт заблокирован, смените пароль.',
             ];
         }
 
         throw ValidationException::withMessages([
-            'password' => 'РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ. РџРѕРїС‹С‚РѕРє РѕСЃС‚Р°Р»РѕСЃСЊ: '.$remaining.'.',
+            'password' => 'Неверный пароль. Попыток осталось: '.$remaining.'.',
         ]);
     }
 
@@ -80,7 +80,7 @@ class AuthService
 
         if (! $user) {
             throw ValidationException::withMessages([
-                'email' => 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ.',
+                'email' => 'Пользователь не найден.',
             ]);
         }
 

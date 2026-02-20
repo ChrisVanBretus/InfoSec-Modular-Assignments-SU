@@ -25,7 +25,7 @@ class AuthController extends Controller
         $user = $this->authService->register($data);
         $this->authService->loginUser($request, $user);
 
-        return redirect('/')->with('status', 'Р РµРіРёСЃС‚СЂР°С†РёСЏ СѓСЃРїРµС€РЅР°.');
+        return redirect('/')->with('status', 'Регистрация успешна.');
     }
 
     public function showLogin()
@@ -54,7 +54,7 @@ class AuthController extends Controller
     {
         $this->authService->logout($request);
 
-        return redirect('/login')->with('status', 'Р’С‹ РІС‹С€Р»Рё РёР· СЃРёСЃС‚РµРјС‹.');
+        return redirect('/login')->with('status', 'Вы вышли из системы.');
     }
 
     public function showReset()
@@ -71,6 +71,6 @@ class AuthController extends Controller
 
         $this->authService->resetPassword($data);
 
-        return redirect('/login')->with('status', 'РџР°СЂРѕР»СЊ РѕР±РЅРѕРІР»РµРЅ. Р’РѕР№РґРёС‚Рµ СЃРЅРѕРІР°.');
+        return redirect('/login')->with('status', 'Пароль обновлен. Войдите снова.');
     }
 }

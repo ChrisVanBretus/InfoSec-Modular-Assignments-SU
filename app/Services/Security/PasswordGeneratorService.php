@@ -9,7 +9,7 @@ class PasswordGeneratorService
     public function generate(int $length): string
     {
         if ($length < 8) {
-            throw new InvalidArgumentException('РњРёРЅРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° РїР°СЂРѕР»СЏ вЂ” 8 СЃРёРјРІРѕР»РѕРІ.');
+            throw new InvalidArgumentException('Минимальная длина пароля — 8 символов.');
         }
 
         $upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
